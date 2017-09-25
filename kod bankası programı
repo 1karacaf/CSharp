@@ -1,0 +1,230 @@
+//form1.cs:
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace kodbankasi
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+        private int VeriIslem(string sql)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.connStr))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    return cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+                //throw;
+                return 0;
+            }
+        }
+        private static DataTable verilistele(string sql)
+        {
+            SqlConnection conn = new SqlConnection(Properties.Settings.Default.connStr);
+            SqlDataAdapter da = new SqlDataAdapter(sql, conn);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+            return dt;
+        }
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            kategoriListele();
+        //    baslikListele();
+
+            
+
+        }
+
+       
+
+        private void baslikListele()
+        {
+            listBox2.DataSource = verilistele("select * from Kodlar");
+            listBox2.ValueMember = "Id";
+            listBox2.DisplayMember = "Baslik";
+        }
+
+        private void kategoriListele()
+        {
+            listBox1.DataSource = verilistele("select * from Kategoriler");
+            listBox1.ValueMember = "Id";
+            listBox1.DisplayMember = "KategoriAdi";
+        }
+
+        private void kategoriToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form2 frm = new Form2();
+            frm.ShowDialog();
+
+
+            
+        }
+
+        private void kodEklemeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form3 frm1 = new Form3();
+            frm1.ShowDialog();
+        }
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+           listBox2.DataSource= verilistele("select id,Baslik from Kodlar ");
+            listBox2.ValueMember = "id";
+            listBox2.DisplayMember = "Baslik";
+            
+        }
+
+        private void Form1_Activated(object sender, EventArgs e)
+        {
+            kategoriListele();
+        //    baslikListele();
+        }
+
+        private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            verilistele("select Detay from Kodlar where Id ="+listBox2.SelectedIndex);
+        }
+    }
+}
+////////////////
+//Form2.cs:
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace kodbankasi
+{
+    public partial class Form2 : Form
+    {
+        public Form2()
+        {
+            InitializeComponent();
+        }
+        private int VeriIslem(string sql)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.connStr))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    return cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+                //throw;
+                return 0;
+            }
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            VeriIslem("insert into Kategoriler(KategoriAdi) values('"+textBox1.Text+"')");
+
+        }
+
+        private void Form2_Load(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
+/////////////
+//Form3.cs:
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace kodbankasi
+{
+    public partial class Form3 : Form
+    {
+        public Form3()
+        {
+            InitializeComponent();
+
+
+        }
+        private int VeriIslem(string sql)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.connStr))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    return cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+                //throw;
+                return 0;
+            }
+        }
+        private static DataTable verilistele(string sql)
+        {
+            SqlConnection conn = new SqlConnection(Properties.Settings.Default.connStr);
+            SqlDataAdapter da = new SqlDataAdapter(sql, conn);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+            return dt;
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form3_Load(object sender, EventArgs e)
+        {
+            comboBox1.DataSource = verilistele("select * from Kategoriler");
+            comboBox1.ValueMember = "Id";
+            comboBox1.DisplayMember = "KategoriAdi";
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            VeriIslem("insert into Kodlar(Baslik,Detay,kat_id) values('" + textBox1.Text + "','" + richTextBox1.Text + "' ,"+comboBox1.SelectedValue+")");
+        }
+    }
+}
