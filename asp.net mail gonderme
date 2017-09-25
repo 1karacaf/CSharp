@@ -1,0 +1,43 @@
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Net.Mail;
+using System.Net;
+
+namespace mailasp.net
+{
+    public class enginee
+    {
+        public string MailAdres { get; private set; }
+
+        public string MailGonder( string mailadres,string baslik, string icerik) {
+            string Durum = "";
+            try
+            {
+                SntpClient sc = new SntpClient();
+                sc.Port = 587;
+                sc.Host = "sntp.gmail.com";
+                sc.EnableSsl = "true";
+
+                sc.Credentials = new NetworkCredential("mailtest1442@gmail.com", "Test+159753");
+
+                MailMessage mail = new MailMessage();
+                mail.From = new MailAddress("mailtest1442@gmail.com", "Elginkan Uzem  Deneme Mail");
+                mail.To.Add(MailAdres);
+                mail.Subject = baslik;
+                mail.IsBodyHtml = true;
+                mail.Body = icerik;
+
+                sc.Send(mail);
+                Durum = "1";
+            }
+            catch ( Exception hata)
+            {
+                Durum = hata.Message.ToString();
+            }
+            return Durum;
+        }
+    }
+}
