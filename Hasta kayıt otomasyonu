@@ -1,0 +1,112 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace elginkanbitirme
+{
+    public partial class Form1 : System.Windows.Forms.Form
+    {
+             
+    
+
+           public Form1()
+        {
+            InitializeComponent();
+        }
+       
+
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            comboBox1.DataSource = comboBox1.DataSource = PolListele("select * from poliklinik");
+            comboBox1.ValueMember = "Id";
+            comboBox1.DisplayMember = "poladi";
+
+        }
+
+
+
+        private static DataTable PolListele(string sql)
+        {
+            SqlConnection conn = new SqlConnection(Properties.Settings.Default.connStr);
+            SqlDataAdapter da = new SqlDataAdapter(sql, conn);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+            return dt;
+        }
+       
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+          
+        }
+
+        private void comboBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            
+
+
+
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+             VeriIslem("insert into Hastalar(TCno,Ad,Soyad,Yas,PolId) values('" + textBox1.Text + "','" + textBox2.Text + "','" + textBox3.Text + "'," +Convert.ToInt32(textBox4.Text) + ","+comboBox1.SelectedValue+")");
+           
+        }
+        //veriislem neden var ??:
+        private int VeriIslem(string sql)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.connStr))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    return cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+                //throw;
+                return 0;
+            }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            //dataGridView1.DataSource = dataGridView1.DataSource = PolListele("select * from Hasta where Ad=" + textBox5.Text );
+            dataGridView1.DataSource = dataGridView1.DataSource = PolListele("select * from Hastalar");
+
+        }
+
+        private void textBox5_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {    
+            
+            dataGridView1.DataSource = dataGridView1.DataSource = PolListele("select * from Hastalar where Ad ='"+textBox2.Text +"'");
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+    }
+}
